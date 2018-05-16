@@ -52,3 +52,15 @@ final中结合trainSet多次使用
 	
 	
 getFeature可能出错，去掉endP后排查试试，endP可以跳过错误但是需要知道错误原因
+第1668个出错，第3261出错，新建一个testGetFeature进行测试
+
+第6671数据明显有问题，画图可以看出，抛弃不用
+问：如何抛弃数据
+答：用同类型的文件代替
+
+注：有问题的数据 4765,6671
+
+多次重复finalProgram,在trainFeatures = combineFeature(trainSet,leadway,beats);
+出现带有下标的赋值维度不匹配，判断为 getFeature没有问题，需要检测combineFeature
+
+需要先检测一下oneSignalFeature

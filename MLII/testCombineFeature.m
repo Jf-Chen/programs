@@ -1,3 +1,14 @@
+%% 示例标题
+% 示例目标摘要
+
+%% 节 1 标题
+% first 代码块说明
+a = 1;
+
+%% 节 2 标题
+% second 代码块说明
+
+
 function [Features] = combineFeature(trainSet,leadway,beats)
 %COMBINEFEATURE 整合特征，处理averageFeature得到的oneSinglaFeature
 %               合成整个训练集的Features
@@ -13,22 +24,19 @@ correctway=1;
 extractway=1;
 trainSetClumn=size(trainSet,2);
 Features=cell(1,trainSetClumn);
-for k=1:size(trainSet,2)    %------------观察一下其他类型的
+for k=1:size(trainSet,2)
     typeSet=trainSet{1,k}; %1xYYY
     tempFeature=cell(1,1);
-    for i=1:size(typeSet,2) 
-        fprintf('trainSet locate at %d ',k);
+    for i=1:size(typeSet,2)
         datanum=typeSet(1,i);
         origindata = loadData(dataPath,datanum,leadway);
         correctedData = correctBaseline(correctway,origindata,frequency);
         %控制台打印所执行的文件
-        fprintf('当前所执行的文件是第 %d 个 ',datanum)
+        fprintf('当前所执行的文件是第 %d 个 \n',datanum)
         collection=getFeature(correctedData,extractway);
-        fprintf('size of collection=%d x %d \n',size(collection,1),size(collection,2));
         oneSignalFeature = averageFeature(beats,collection); %得到1x15的矩阵，假如取RR,SP,RS和五个心跳周期用来观察
-        fprintf('size of oneSignalFeature=%d x %d \n',size(oneSignalFeature,1),size(oneSignalFeature,2));
+        fprintf('size of oneSignalFeature=%d x %d',size(oneSignalFeature,1),size(oneSignalFeature,2));
         tempFeature{1,1}(end+1,:)=oneSignalFeature; % 需要维度一致
-        fprintf('size of tempFeature= %d x %d ',size(tempFeature{1,1},1),size(tempFeature{1,1},2));
     end
     %此时tempFeature是一个1x1cell,包含size(typeSet,2) x size（oneSingalFeature,2）的矩阵
     % 可以看做是1000x15

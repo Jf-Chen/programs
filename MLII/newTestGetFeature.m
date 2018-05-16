@@ -1,4 +1,20 @@
-function   [collection]=getFeature(data,extractway)
+%% 示例标题
+% 示例目标摘要
+
+%% 节 1 标题
+% first 代码块说明
+
+
+%% 节 2 标题
+% second 代码块说明
+
+
+function [collection,oneSignalFeature]=newTestGetFeature(datanum)
+
+
+
+
+% function   [collection]=getFeature(data,extractway)
 %GETFEATURE 此处显示有关此函数的摘要
 %   collection在extractway==1时是3xYY的矩阵，代表三种间隔
 %   RR是RR间隔 1xYY,SP是P波峰和S波谷间隔,RS是R波峰S波谷间隔
@@ -10,12 +26,38 @@ function   [collection]=getFeature(data,extractway)
 
 
 %   默认值
-% extractway=1;
+extractway=1;
 % load data0001.mat;
 %  data=correctBaseline(2,data,500);
+dataPath='E:\icbeb\TrainingSet';
+% datanum=3261;
+% datanum=6671;
+% datanum=1668;
+% datanum=3861;
+% datanum=5223;
+% datanum=565;
+% datanum=2860;
+% datanum=4765;
+% datanum=6671;
+% datanum=6485;
+% datanum=1372;
+% datanum=2933;
+% datanum=11;
 
+% datanum=2933 ;
+% datanum=679;
+
+
+leadway=2;
+correctway=1;
+frequency=500;
+
+
+[origindata] = loadData(dataPath,datanum,leadway);
+figure(20);plot(origindata);axis tight;
+data = correctBaseline(correctway,origindata,frequency);
 %-----------------------------------------------------------------
-% figure(1);plot(data);axis tight;
+figure(1);plot(data);axis tight;
 %-------------------------------------------------------------------
 
 % figure(6);plot(data);axis tight;
@@ -128,7 +170,7 @@ for k=1:size(Rl_border,2)
 end
 
 %----------------------------------------------------------------------------
-%figure(1);hold on;plot(R_peak,data(R_peak),'ro');
+figure(1);hold on;plot(R_peak,data(R_peak),'ro');
 %----------------------------------------------------------------------------
 
 
@@ -185,7 +227,7 @@ end
  
  
  %----------------------------------------------------------------------------
- %figure(1);hold on;plot(P_peak,data(P_peak),'rx'); %基本准确，受到去噪效果的影响
+ figure(1);hold on;plot(P_peak,data(P_peak),'rx'); %基本准确，受到去噪效果的影响
  %----------------------------------------------------------------------------
  
  
@@ -209,7 +251,7 @@ end
  
  
  %---------------------------------------------------
-  %figure(1);hold on;plot(S_trough,data(S_trough),'r^');  %基本准确
+  figure(1);hold on;plot(S_trough,data(S_trough),'r^');  %基本准确
   %------------------------------------------------------------------------
   
   
@@ -232,9 +274,11 @@ switch extractway
 
 end
 
+ beats=5;
+ oneSignalFeature = averageFeature(beats,collection);
 %然后做什么来着,多个一组进行简单的分类器训练
 
 
 
+% end
 end
-
