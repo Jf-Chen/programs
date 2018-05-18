@@ -15,34 +15,34 @@ trainSetClumn=size(trainSet,2);
 Features=cell(1,trainSetClumn);
 %替换文件，类型1-类型9
 replaceFile=[2,3,39,11,1,47,5,8,21];
-beReplacedFile=cell(1,9); % 按类型排列 存放被替换的文件
+beReplacedFile=cell(1,9);
 
 for k=1:size(trainSet,2)    %------------观察一下其他类型的
     typeSet=trainSet{1,k}; %1xYYY
     tempFeature=cell(1,1);
     for i=1:size(typeSet,2) 
-%         fprintf('trainSet locate at %d ',k);
+        fprintf('trainSet locate at %d ',k);
         datanum=typeSet(1,i);
         origindata = loadData(dataPath,datanum,leadway);
         correctedData = correctBaseline(correctway,origindata,frequency);
         %控制台打印所执行的文件
-        fprintf('当前文件 %d',datanum)
+        fprintf('当前所执行的文件是第 %d 个 ',datanum)
         collection=getFeature(correctedData,extractway);
         %校验维数是否有0出现
         if(size(collection,1)==0 || size(collection,2)<5)
-            beReplacedFile{1,k}(end+1)=typeSet(1,i);
-            fprintf('  文件%d被替换了  ',typeSet(1,i));
+            beReplacedF
             clear collection origindata correctedData;
             datanum=replaceFile(1,k);
             origindata = loadData(dataPath,datanum,leadway);
             correctedData = correctBaseline(correctway,origindata,frequency);
             collection=getFeature(correctedData,extractway);
+            fprintf('  文件%d被替换了  ',typeSet(1,i));
         end
-        fprintf('collection=%d x %d',size(collection,1),size(collection,2));
+        fprintf(' collection=%d x %d \n',size(collection,1),size(collection,2));
         oneSignalFeature = averageFeature(beats,collection); %得到1x15的矩阵，假如取RR,SP,RS和五个心跳周期用来观察
-        fprintf(' oneSignalFea=% dx %d',size(oneSignalFeature,1),size(oneSignalFeature,2));
+        fprintf(' oneSignalFeature=%d x %d \n',size(oneSignalFeature,1),size(oneSignalFeature,2));
         tempFeature{1,1}(end+1,:)=oneSignalFeature; % 需要维度一致
-        fprintf(' tempFea=%d x %d\n',size(tempFeature{1,1},1),size(tempFeature{1,1},2));
+        fprintf(' tempFeature= %d x %d ',size(tempFeature{1,1},1),size(tempFeature{1,1},2));
     end
     %此时tempFeature是一个1x1cell,包含size(typeSet,2) x size（oneSingalFeature,2）的矩阵
     % 可以看做是1000x15

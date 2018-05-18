@@ -51,6 +51,8 @@ share=11; %每种取1/11作为测试集，10/11作为训练集，如果要进行交叉验证用10折交叉验
 %---------------形成总的分类模型---------------------------
 trainFeatures = combineFeature(trainSet,leadway,beats);
 testFeatures = combineFeature(testSet,leadway,beats);
+save('trainFeatures.mat','trainFeatures');
+save testFeatures.mat testFeatures
 accuracy=0;
 [model,accuracy]=oneclassifer(type1,type2,trainFeatures,testFeatures);
 %---------------形成总的分类模型 end-----------------------

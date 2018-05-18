@@ -1,0 +1,20 @@
+%% 示例标题
+% 示例目标摘要
+
+%% 节 1 标题
+% first 代码块说明
+
+%% 节 2 标题
+% second 代码块说明
+
+
+    fprintf('now datanum=%d ',datanum);
+    dataPath='E:\icbeb\TrainingSet';
+    leadway=2;extractway=1;
+    correctway=1;
+    frequency=500;
+    [origindata] = loadData(dataPath,datanum,leadway);
+    data = correctBaseline(correctway,origindata,frequency);
+    
+    
+    

@@ -11,7 +11,7 @@ function [origindata] = loadData(dataPath,datanum,leadway)
 % datanum=1;
 
 
-
+%以下部分可以优化，将这一部分存储起来，不必重复计算
 dataPath=[dataPath];
 %获取目录下所有文件
 fileFolder=fullfile(dataPath);

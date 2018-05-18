@@ -1,4 +1,4 @@
-function   [collection,outputCluster_center2]=getFeature(data,extractway)
+function   [collection]=getFeature(data,extractway)
 %GETFEATURE 此处显示有关此函数的摘要
 %   collection在extractway==1时是3xYY的矩阵，代表三种间隔
 %   RR是RR间隔 1xYY,SP是P波峰和S波谷间隔,RS是R波峰S波谷间隔
@@ -17,7 +17,7 @@ function   [collection,outputCluster_center2]=getFeature(data,extractway)
 
 
 %-----------------------------------------------------------------
-% figure(1);plot(data);axis tight;
+figure(1);plot(data);axis tight;
 %-------------------------------------------------------------------
 
 
@@ -44,11 +44,9 @@ end
 %二分聚类
 
 derivative=derivative';
-opts = statset('Display','final');
-[IDX_derivative,cluster_center2]=kmeans(derivative,2,'emptyaction','drop');
-% [IDX_derivative,cluster_center2]=kmeans(derivative,2,'emptyaction','drop','Replicates',5,'Options',opts,'Start','sample');%导数毫无意义
+[IDX_derivative,cluster_center2]=kmeans(derivative,2,'emptyaction','drop');%导数毫无意义
 %输出观察一下
-outputCluster_center2=cluster_center2;
+outputCluster_center2=cluste
 IDX_derivative=IDX_derivative';
 IDX_derivative=IDX_derivative-1;%IDX是1和0,大小为1xYYYY-2
 
@@ -67,7 +65,7 @@ IDX_slope1=IDX_slope1-1;
 
 
 %-----------------------------------------------------------------
-% figure(2);plot(IDX_slope1);axis tight;legend('slope');
+figure(2);plot(IDX_slope1);axis tight;legend('slope');
 %----------------------------------------------------------------------
 
 
@@ -149,7 +147,7 @@ end
 
 
 %----------------------------------------------------------------------------
-% figure(1);hold on;plot(R_peak,data(R_peak),'ro');
+figure(1);hold on;plot(R_peak,data(R_peak),'ro');
 %----------------------------------------------------------------------------
 
 
@@ -213,9 +211,9 @@ end
  
  
  
-%----------------------------------------------------------------------------
-%  figure(1);hold on;plot(P_peak,data(P_peak),'rx'); %基本准确，受到去噪效果的影响
-%----------------------------------------------------------------------------
+ %----------------------------------------------------------------------------
+ figure(1);hold on;plot(P_peak,data(P_peak),'rx'); %基本准确，受到去噪效果的影响
+ %----------------------------------------------------------------------------
  
  
  
@@ -240,7 +238,7 @@ end
  
  
 %---------------------------------------------------
-% figure(1);hold on;plot(S_trough,data(S_trough),'r^');  %基本准确
+figure(1);hold on;plot(S_trough,data(S_trough),'r^');  %基本准确
 %------------------------------------------------------------------------
   
   
