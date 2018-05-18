@@ -9,7 +9,7 @@
 % second 代码块说明
 
 
-function [collection,oneSignalFeature]=newTestGetFeature(datanum)
+% function [collection,oneSignalFeature]=newTestGetFeature(datanum)
 
 
 
@@ -46,7 +46,8 @@ dataPath='E:\icbeb\TrainingSet';
 
 % datanum=2933 ;
 % datanum=679;
-
+% datanum=1670;
+datanum=1225;
 
 leadway=2;
 correctway=1;
@@ -96,7 +97,7 @@ slope=slope';
 IDX_slope=IDX_slope';
 IDX_slope=IDX_slope-1;
 
-% figure(2);plot(IDX_slope);axis tight;legend('slope');
+figure(2);plot(IDX_slope);axis tight;legend('slope');
 
 bound=0;
 if sum(IDX_derivative)<size(IDX_derivative,2)
@@ -159,7 +160,7 @@ Rr_border(end+1)=flag(k,2);
 %观察图像可知大致对上了，但是在1800点之前略有偏差
 R_peak=[];maxR=0;maxloc=0;
 for k=1:size(Rl_border,2)
-    maxR=-1;maxloc=0;
+    maxR=-1;maxloc=Rl_border(1,1);
     for i=Rl_border(1,k):Rr_border(1,k)
         if data(1,i)>maxR
             maxR=data(1,i);
@@ -281,4 +282,4 @@ end
 
 
 % end
-end
+% end

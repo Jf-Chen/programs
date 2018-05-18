@@ -64,3 +64,8 @@ getFeature可能出错，去掉endP后排查试试，endP可以跳过错误但�
 出现带有下标的赋值维度不匹配，判断为 getFeature没有问题，需要检测combineFeature
 
 需要先检测一下oneSignalFeature
+
+
+2018/5/17
+顺序执行时出问题的文件：
+1225,1670
