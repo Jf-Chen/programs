@@ -3,7 +3,7 @@
 %   此处显示详细说明
 replaceFile=[2,3,39,11,1,47,5,8,21];
 beReplacedFile=cell(1,9); % 按类型排列 存放被替换的文件
-
+%证明try catch是可行的
 
 % testnum=2933;
 % for datanum=testnum-3:testnum+3
@@ -17,7 +17,7 @@ observe=0;
 % for datanum=1687:1687
 % for newk=1:20
 % for datanum=2513:2513
-for datanum=1:6877
+for datanum=6816;6816
     fprintf('now datanum=%d ',datanum);
     dataPath='E:\icbeb\TrainingSet';
     leadway=2;extractway=1;
@@ -30,18 +30,19 @@ for datanum=1:6877
     [collection,outputCluster_center2]=getFeature(data,extractway);
     catch 
         datanum=datanum-1;
+        fprintf(' 重复一次 ');
         continue;
     end
-        if(size(collection,1)==0 || size(collection,2)<5)
-            %可以将这一部分的程序打包，提供给try catch 使用
-            beReplacedFile{1,1}(end+1)=datanum;
-            fprintf('  文件%d被替换了  ',datanum);
-            clear collection origindata correctedData;
-            datanum=replaceFile(1,1);
-            origindata = loadData(dataPath,datanum,leadway);
-            correctedData = correctBaseline(correctway,origindata,frequency);
-            collection=getFeature(correctedData,extractway);
-        end
+%         if(size(collection,1)==0 || size(collection,2)<5)
+%             %可以将这一部分的程序打包，提供给try catch 使用
+%             beReplacedFile{1,1}(end+1)=datanum;
+%             fprintf('  文件%d被替换了  ',datanum);
+%             clear collection origindata correctedData;
+%             datanum=replaceFile(1,1);
+%             origindata = loadData(dataPath,datanum,leadway);
+%             correctedData = correctBaseline(correctway,origindata,frequency);
+%             collection=getFeature(correctedData,extractway);
+%         end
     
     observe=outputCluster_center2;
     

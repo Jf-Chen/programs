@@ -1,4 +1,4 @@
-function  finalProgram(leadway,dataPath,outputPath,beats)
+% function [outputArg1,outputArg2] = finalProgram(leadway,dataPath,outputPath)
 %FINALPROGRAM 该函数每次只处理一个存储文件的信号，即A0001.mat，得出一个输出结果，命名为Result0001.mat，
 %首先经过correctBaseline去噪，之后经过getFeature得到特征（RR,QR,QS）
 %
@@ -16,7 +16,7 @@ inputPath=[dataPath];
 datanum=11;
 csvPath='E:\icbeb\REFERENCE.csv';
 type1=1;type2=2;
-
+beats=5;
 
 
 
@@ -49,19 +49,28 @@ share=11; %每种取1/11作为测试集，10/11作为训练集，如果要进行交叉验证用10折交叉验
 %---------------进行10折交叉验证 end-------------------------------
 
 %---------------形成总的分类模型---------------------------
-[trainFeatures,trBeReplacedFile] = combineFeature(trainSet,leadway,beats);
-[testFeatures,teBeReplacedFile] = combineFeature(testSet,leadway,beats);
+trainFeatures = combineFeature(trainSet,leadway,beats);
+testFeatures = combineFeature(testSet,leadway,beats);
 save('trainFeatures.mat','trainFeatures');
 save testFeatures.mat testFeatures
 
-save trainSet.mat trainSet
-save testSet.mat testSet
-
 %形成9*8/2个个分类器
-
-save allAccuracy.mat allAccuracy;
+allAccuracy=zeros(8,9);
+for k=1:8
+    for i=k+1:9
+        type1=k;
+        type2=i;
+        modelname=['model',num2str(type1),num2str(type2)];
+        modelFileName=['model',num2str(type1),num2str(type2),'.mat'];
+        eval(['[',modelname,',accuracy]=oneclassifer(type1,type2,trainFeatures,testFeatures);']);
+        eval(['save(',modelFileName,',',modelname]);
+        allAccuracy(k,i)=accuracy;
+    end
+    
+end
+save
 
 %---------------形成总的分类模型 end-----------------------
-
-end
+accuracy=accuracy-1;
+% end
 
