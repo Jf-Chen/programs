@@ -47,7 +47,7 @@ dataPath='E:\icbeb\TrainingSet';
 % datanum=2933 ;
 % datanum=679;
 % datanum=1670;
-datanum=1225;
+datanum=46;
 
 leadway=2;
 correctway=1;
@@ -55,11 +55,31 @@ frequency=500;
 
 
 [origindata] = loadData(dataPath,datanum,leadway);
-figure(20);plot(origindata);axis tight;
+% figure(20);plot(origindata);axis tight;
 data = correctBaseline(correctway,origindata,frequency);
+
+%GETFEATURE 此处显示有关此函数的摘要
+%   collection在extractway==1时是3xYY的矩阵，代表三种间隔
+%   RR是RR间隔 1xYY,SP是P波峰和S波谷间隔,RS是R波峰S波谷间隔
+%   leadway参数范围是1-12，代表12种导联方式，这里以MLII为示例
+%   inputPath是输入路径，末尾包含'\',outputPath同理
+%   data是经过correctBaseline的数据，代表一个信号的一个导联,data格式必须是1xYYYY
+%   extractway是提取方式,如1是提取三个特征
+
+
+
+%   默认值
+% extractway=1;
+% load data0001.mat;
+%  data=correctBaseline(2,data,500);
+
+
+
 %-----------------------------------------------------------------
 figure(1);plot(data);axis tight;
 %-------------------------------------------------------------------
+
+
 
 % figure(6);plot(data);axis tight;
 
@@ -83,9 +103,15 @@ end
 %二分聚类
 
 derivative=derivative';
-[IDX_derivative,cluster_center2]=kmeans(derivative,2,'emptyaction','drop');%导数毫无意义
+opts = statset('Display','final');
+% [IDX_derivative,cluster_center2]=kmeans(derivative,2,'emptyaction','drop');
+[IDX_derivative,cluster_center2]=kmeans(derivative,2,'emptyaction','drop','Replicates',5,'Options',opts,'Start','sample');%导数毫无意义
+%输出观察一下
+outputCluster_center2=cluster_center2;
 IDX_derivative=IDX_derivative';
 IDX_derivative=IDX_derivative-1;%IDX是1和0,大小为1xYYYY-2
+
+
 % figure(2);subplot(2,1,2);%  画图发现IDX大部分是0
 % plot(IDX_derivative);axis tight;legend('derivative');
 
@@ -93,11 +119,23 @@ IDX_derivative=IDX_derivative-1;%IDX是1和0,大小为1xYYYY-2
 absslope=abs(slope);
 absslope=absslope';
 slope=slope';
-[IDX_slope,cluster_center1]=kmeans(absslope,2,'emptyaction','drop');
-IDX_slope=IDX_slope';
-IDX_slope=IDX_slope-1;
 
-figure(2);plot(IDX_slope);axis tight;legend('slope');
+[IDX_slope1,cluster_center1]=kmeans(absslope,2,'emptyaction','drop');
+
+% data=data';
+% [IDX_slope1,cluster_center1]=kmeans(data,2,'emptyaction','drop');
+% data=data';
+IDX_slope1=IDX_slope1';
+IDX_slope1=IDX_slope1-1;
+
+
+
+%-----------------------------------------------------------------
+% figure(2);plot(IDX_slope1);axis tight;legend('slope');
+%----------------------------------------------------------------------
+
+
+
 
 bound=0;
 if sum(IDX_derivative)<size(IDX_derivative,2)
@@ -110,17 +148,17 @@ Rsharp=[];%Rwave,1xYYY,记录R波峰所在是第几个点，如Rwave(1,1)=30,对应data的第31个
 %---------------定位R波峰模块end-------------------------------
 %用学长的方法
 bound=0;
-if sum(IDX_slope)<size(IDX_slope,2)/2
+if sum(IDX_slope1)<size(IDX_slope1,2)/2
     bound=1;
 end;
 flag=[];
-siz=size(IDX_slope,2)-1;
+siz=size(IDX_slope1,2)-1;
 i=1;
 a=0; % 记录连续的‘0’个数（bound==0）
 b=0; % 记录连续的‘1’个数（bound==0）
 for k=2:siz-1
-    if IDX_slope(k)==bound
-        if IDX_slope(k-1)==1-bound && IDX_slope(k+1)==bound
+    if IDX_slope1(k)==bound
+        if IDX_slope1(k-1)==1-bound && IDX_slope1(k+1)==bound
             flag(i,1)=1;
             flag(i,2)=k;
             if i>2
@@ -131,7 +169,7 @@ for k=2:siz-1
             end;
             i=i+1;
         else
-            if IDX_slope(k-1)==bound && IDX_slope(k+1)==1-bound
+            if IDX_slope1(k-1)==bound && IDX_slope1(k+1)==1-bound
                 flag(i,1)=-1;
                 flag(i,2)=k;
                 i=i+1;
@@ -139,16 +177,19 @@ for k=2:siz-1
         end;
         a=a+1;
     end;
-    if i>2 && IDX_slope(k)==1-bound  
+    if i>2 && IDX_slope1(k)==1-bound  
         b=b+1;
     end;
 end;
+
+
+%---------------------第一次计算-------------------------------------
 f=flag(1,1);
 loc=flag(1,2);
 Rl_border=[];Rr_border=[];
 cycle=500;%如何确定一个心跳周期的长度？
 for k=1:size(flag,1)
-    if(flag(k,2)-loc>cycle*5/12)
+    if(flag(k,2)-loc>cycle*9/24)
         Rl_border(end+1)=loc;
         Rr_border(end+1)=flag(k-1,2);
         loc=flag(k,2);
@@ -169,10 +210,68 @@ for k=1:size(Rl_border,2)
     end
      R_peak(end+1)=maxloc;%R_peak 1x40
 end
+sumR_peakData=0;
+for k=1:size(R_peak,2)
+    sumR_peakData=sumR_peakData+data(R_peak(1,k));
+end
+averageR_hight=sumR_peakData/size(R_peak,2);%检测出的R波的均值，方便第二次检测引入R波振幅大的特征
+fprintf('sumR_peakData %f size(R_peak,2) %d ',sumR_peakData,size(R_peak,2));
+%-----------------------第一次计算 end------------------------------------
+
+
+
+%----------------------计算平均周期后再计算一次------------------------------
+sumRR=0;averageRR=0;
+for k=2:size(R_peak,2) %计算平均RR间隔作为周期
+    sumRR=sumRR+R_peak(k)-R_peak(k-1);
+end
+tempRinterval=size(R_peak,2);
+fprintf('R_peak= %d ',tempRinterval);
+if size(R_peak,2)<1
+    temp=1;
+end
+averageRR=sumRR/tempRinterval;
+f=flag(1,1);
+loc=flag(1,2);
+Rl_border=[];Rr_border=[];
+cycle=500;%如何确定一个心跳周期的长度？
+for k=1:size(flag,1)
+    if(flag(k,2)-loc>2/3*averageRR)  %-------------------此处值得商榷-------------
+        Rl_border(end+1)=loc;
+        Rr_border(end+1)=flag(k-1,2);
+        loc=flag(k,2);
+    end;
+end;
+Rl_border(end+1)=loc;
+Rr_border(end+1)=flag(k,2);
+% figure(1);hold on;plot(Rl_border,data(Rl_border),'rx');plot(Rr_border,data(Rr_border),'rs');
+%观察图像可知大致对上了，但是在1800点之前略有偏差
+clear R_peak;
+R_peak=[];maxR=0;maxloc=0;
+for k=1:size(Rl_border,2)
+    maxR=averageR_hight*5/6;%maxloc=Rl_border(1,1); %---------------平均“R波”振幅-----------可能误伤正常波形
+    maxloc=0;
+    for i=Rl_border(1,k):Rr_border(1,k)
+        if data(1,i)>maxR
+            maxR=data(1,i);
+            maxloc=i;
+        end
+    end
+    if maxloc ~= 0
+         R_peak(end+1)=maxloc;%R_peak 1x40
+    end
+    
+end
+
+%----------------------计算平均周期后再计算一次 end--------------------------
+
+%引入averageR_hight后Rl_border和Rr_border也需要重新计算吗？似乎不必
+
 
 %----------------------------------------------------------------------------
 figure(1);hold on;plot(R_peak,data(R_peak),'ro');
 %----------------------------------------------------------------------------
+
 
 
 %-----------检测P和S----------------------------
@@ -188,7 +287,12 @@ sumRR=0;averageRR=0;
 for k=2:size(R_peak,2) %计算平均RR间隔作为周期
     sumRR=sumRR+R_peak(k)-R_peak(k-1);
 end
-averageRR=sumRR/(size(R_peak,2)-1);
+tempRinterval=size(R_peak,2);
+fprintf('R_peak= %d ',tempRinterval);
+if size(R_peak,2)<1
+    temp=1;
+end
+averageRR=sumRR/tempRinterval;
 %寻找P_peak
 tempR=0;startP=0;maxPdata=0;maxPi=0;
 P_peak=[];% 记录P波峰
@@ -227,9 +331,13 @@ end
  %查看结果  
  
  
- %----------------------------------------------------------------------------
+ 
+ 
+%----------------------------------------------------------------------------
  figure(1);hold on;plot(P_peak,data(P_peak),'rx'); %基本准确，受到去噪效果的影响
- %----------------------------------------------------------------------------
+%----------------------------------------------------------------------------
+ 
+ 
  
  
  
@@ -251,18 +359,18 @@ end
  
  
  
- %---------------------------------------------------
-  figure(1);hold on;plot(S_trough,data(S_trough),'r^');  %基本准确
-  %------------------------------------------------------------------------
+%---------------------------------------------------
+figure(1);hold on;plot(S_trough,data(S_trough),'r^');  %基本准确
+%------------------------------------------------------------------------
   
   
   
 %-----------检测P和S end-----------------
-collection=[];
+collection=[];RR=[];SP=[];RS=[];
 switch extractway
     case 1
         
-        RR=[];SP=[];RS=[];
+        
         %与之前的不同，猜测信号的首尾部分一定存在R波而不一定存在P,S波,
         %以两个R波峰之间为一个周期进行统计，
         %PS是一个RR间隔内的距离，RS是S波与靠前的R波峰之间的距离
@@ -274,6 +382,26 @@ switch extractway
         end
 
 end
+
+%然后做什么来着,多个一组进行简单的分类器训练
+
+
+% clear data;
+% clear dataLength derivative IDX_derivative;
+% clear absslope data slope;
+% clear IDX_slope Rl_border Rrborder;
+% clear R_peak maxR maxloc;
+% clear newslope tempRinterval averageRR;
+% clear sumRR P_peak tempR;
+% clear startP maxPdata maxPi;
+% clear endS minSdata minSi;
+% clear S_trough RR SP;
+% clear RS extractway;
+% 
+% 
+
+
+
 
  beats=5;
  oneSignalFeature = averageFeature(beats,collection);

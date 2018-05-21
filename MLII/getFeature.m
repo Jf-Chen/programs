@@ -148,6 +148,60 @@ for k=1:size(Rl_border,2)
 end
 
 
+%------------------利用得到的‘RR间期’再次定位R波-----------------------------------
+sumR_peakData=0;
+for k=1:size(R_peak,2)
+    sumR_peakData=sumR_peakData+data(R_peak(1,k));
+end
+averageR_hight=sumR_peakData/size(R_peak,2);%检测出的R波的均值，方便第二次检测引入R波振幅大的特征
+fprintf('sumR_peakData %f size(R_peak,2) %d ',sumR_peakData,size(R_peak,2));
+
+
+
+sumRR=0;averageRR=0;
+for k=2:size(R_peak,2) %计算平均RR间隔作为周期
+    sumRR=sumRR+R_peak(k)-R_peak(k-1);
+end
+tempRinterval=size(R_peak,2);
+fprintf('R_peak= %d ',tempRinterval);
+if size(R_peak,2)<1
+    temp=1;
+end
+averageRR=sumRR/tempRinterval;
+f=flag(1,1);
+loc=flag(1,2);
+Rl_border=[];Rr_border=[];
+cycle=500;%如何确定一个心跳周期的长度？
+for k=1:size(flag,1)
+    if(flag(k,2)-loc>2/3*averageRR)  %-------------------此处值得商榷-------------
+        Rl_border(end+1)=loc;
+        Rr_border(end+1)=flag(k-1,2);
+        loc=flag(k,2);
+    end;
+end;
+Rl_border(end+1)=loc;
+Rr_border(end+1)=flag(k,2);
+% figure(1);hold on;plot(Rl_border,data(Rl_border),'rx');plot(Rr_border,data(Rr_border),'rs');
+%观察图像可知大致对上了，但是在1800点之前略有偏差
+clear R_peak;
+R_peak=[];maxR=0;maxloc=0;
+for k=1:size(Rl_border,2)
+    maxR=averageR_hight*5/6;%maxloc=Rl_border(1,1); %---------------平均“R波”振幅-----------可能误伤正常波形
+    maxloc=0;
+    for i=Rl_border(1,k):Rr_border(1,k)
+        if data(1,i)>maxR
+            maxR=data(1,i);
+            maxloc=i;
+        end
+    end
+    if maxloc ~= 0
+         R_peak(end+1)=maxloc;%R_peak 1x40
+    end
+    
+end
+%------------------利用得到的‘RR间期’再次定位R波 end----------------------------------
+
+
 %----------------------------------------------------------------------------
 % figure(1);hold on;plot(R_peak,data(R_peak),'ro');
 %----------------------------------------------------------------------------

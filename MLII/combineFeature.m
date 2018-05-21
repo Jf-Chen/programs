@@ -14,7 +14,7 @@ extractway=1;
 trainSetClumn=size(trainSet,2);
 Features=cell(1,trainSetClumn);
 %替换文件，类型1-类型9
-replaceFile=[2,3,39,11,1,47,5,8,21];
+replaceFile=[2,3,39,11,43,47,5,8,21];
 beReplacedFile=cell(1,9); % 按类型排列 存放被替换的文件
 loopFlag=5;
 for k=1:size(trainSet,2)    %------------观察一下其他类型的
@@ -60,6 +60,9 @@ for k=1:size(trainSet,2)    %------------观察一下其他类型的
     Features{1,k}=tempFeature;
 end
 
+beReplacedFileFileName=['E:\icbeb\programs\MLII\',num2str(beats),'beats\beReplacedFile',num2str(beats),'beats.mat'];
+beReplacedFileName='beReplacedFile';
+eval('save(beReplacedFileFileName,beReplacedFileName);');
 %Feature是1x9 cell 包含特征矩阵
 
 

@@ -1,4 +1,4 @@
-% function [outputArg1,outputArg2] = finalProgram(leadway,dataPath,outputPath)
+function  finalProgram(leadway,dataPath,outputPath,beats)
 %FINALPROGRAM 该函数每次只处理一个存储文件的信号，即A0001.mat，得出一个输出结果，命名为Result0001.mat，
 %首先经过correctBaseline去噪，之后经过getFeature得到特征（RR,QR,QS）
 %
@@ -16,7 +16,7 @@ inputPath=[dataPath];
 datanum=11;
 csvPath='E:\icbeb\REFERENCE.csv';
 type1=1;type2=2;
-beats=5;
+
 
 
 
@@ -49,28 +49,37 @@ share=11; %每种取1/11作为测试集，10/11作为训练集，如果要进行交叉验证用10折交叉验
 %---------------进行10折交叉验证 end-------------------------------
 
 %---------------形成总的分类模型---------------------------
-trainFeatures = combineFeature(trainSet,leadway,beats);
-testFeatures = combineFeature(testSet,leadway,beats);
-save('trainFeatures.mat','trainFeatures');
-save testFeatures.mat testFeatures
+%变量名为trainFeatures5beats，但是存储在按心跳分开的文件夹中，且命名为为5beats\trainFeatures5beats.mat
+trainFeaturesFileName=['E:\icbeb\programs\MLII\',num2str(beats),'beats\trainFeatures',num2str(beats),'beats.mat'];
+trainFeaturesName='trainFeatures';
+testFeaturesFileName=['E:\icbeb\programs\MLII\',num2str(beats),'beats\trainFeatures',num2str(beats),'beats.mat'];
+testFeaturesName='trainFeatures';
+
+eval(['[',trainFeaturesName,',trBeReplacedFile] = combineFeature(trainSet,leadway,beats);']);
+eval(['[',testFeatures,',teBeReplacedFile] = combineFeature(testSet,leadway,beats);']);
+eval('save(trainFeaturesFileName,trainFeatures);');
+
+
+% save('trainFeatures.mat','trainFeatures');
+% save testFeatures.mat testFeatures
+
+
+
+        
+       
+        
+        eval(['[',modelname,',accuracy]=oneclassifer(type1,type2,trainFeatures,testFeatures);']);
+        eval('save(modelFileName,modelname);');
+
+save trainSet.mat trainSet
+save testSet.mat testSet
 
 %形成9*8/2个个分类器
-allAccuracy=zeros(8,9);
-for k=1:8
-    for i=k+1:9
-        type1=k;
-        type2=i;
-        modelname=['model',num2str(type1),num2str(type2)];
-        modelFileName=['model',num2str(type1),num2str(type2),'.mat'];
-        eval(['[',modelname,',accuracy]=oneclassifer(type1,type2,trainFeatures,testFeatures);']);
-        eval(['save(',modelFileName,',',modelname]);
-        allAccuracy(k,i)=accuracy;
-    end
-    
-end
-save
+saveModels(trainFeatures,testFeatures);
+
+save allAccuracy.mat allAccuracy;
 
 %---------------形成总的分类模型 end-----------------------
-accuracy=accuracy-1;
-% end
+
+end
 
