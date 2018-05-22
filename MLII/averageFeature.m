@@ -15,33 +15,36 @@ function oneSignalFeature = averageFeature(beats,collection)
 %
 
 %默认值
-numofFea=4;%max,min,aver,var，四个值，由窗口内裁定得出
+numofFea=5;%max,min,aver,var，四个值，由窗口内裁定得出
 %---------------------------------------------------------------------------
 %输出就四个值，max,min,average,var(X,1,2)返回行向量的方差,返回值是列向量
 clumnSize=size(collection,2);%这个信号包含多少个周期
 % beats=clumnSize; %当有窗口时不需要
 rowSize=size(collection,1); %假设有三种特征表征，如RR,SP,RS，那么最后要得到3x4的tempOneSignalFeature
 tempClumn=floor(clumnSize-beats+1);% 五个心跳作为窗口,39个心跳就有35组数据
-tempOneSignalFeature=zeros(rowSize,numofFea);  %beats而不是tempClumn
+tempOneSignalFeature=zeros(rowSize,8);  %beats而不是tempClumn
 for k=1:rowSize
-    interval=zeros(tempClumn,numofFea+1);
-    for i=1:tempClumn
+    interval=zeros(tempClumn-1,numofFea); %每个窗口内取最大值，最小值，均值，方差，最大值减去最小值，整体对以上五维取均值
+    for i=1:tempClumn-1
         X=collection(k,i:i+beats-1);
-%         interval(i,1)=max(X,[],2);
-%         interval(i,2)=min(X,[],2);
-%         interval(i,3)=mean(X,2);
-%         interval(i,4)=var((X),1,2);
-        interval(i,5)=max(X,[],2)-min(X,[],2);
+        interval(i,1)=max(X,[],2);
+        interval(i,2)=min(X,[],2);
+        interval(i,3)=mean(X,2);
+        interval(i,4)=var((X),1,2);
+        interval(i,5)=interval(i,1)-interval(i,2);
     end
-        %3,4取均值
-%         tempOneSignalFeature(k,:)=mean(interval,1); 
-        %3,4取极值
-%     for j=1:size(interval,1)
-        tempOneSignalFeature(k,1)=max(interval(:,5),[],1);
-        tempOneSignalFeature(k,2)=min(interval(:,5),[],1);
-        tempOneSignalFeature(k,3)=mean(interval(:,5),1);
-        tempOneSignalFeature(k,4)=var(interval(:,5),1,1);
-%     end
+%         tempOneSignalFeature(k,1)=max(collection,[],2); 
+%         tempOneSignalFeature(k,2)=min(collection,[],2); 
+%         tempOneSignalFeature(k,3)=mean(collection,2); 
+%         tempOneSignalFeature(k,4)=var(collection,1,2); 
+        tempOneSignalFeature(k,1)=mean(interval(:,1),1); 
+        tempOneSignalFeature(k,2)=mean(interval(:,2),1); 
+        tempOneSignalFeature(k,3)=mean(interval(:,3),1); 
+        tempOneSignalFeature(k,4)=mean(interval(:,4),1);
+        tempOneSignalFeature(k,5)=mean(interval(:,5),1);
+        tempOneSignalFeature(k,6)=max(collection,[],2);
+        tempOneSignalFeature(k,7)=min(collection,[],2); 
+        tempOneSignalFeature(k,8)=var(collection,1,2); 
 end
 
 

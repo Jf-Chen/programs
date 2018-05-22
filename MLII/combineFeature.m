@@ -49,7 +49,23 @@ for k=1:size(trainSet,2)    %------------观察一下其他类型的
             collection=getFeature(correctedData,extractway);
         end
         fprintf('collection=%d x %d',size(collection,1),size(collection,2));
-        oneSignalFeature = averageFeature(beats,collection); %得到1x15的矩阵，假如取RR,SP,RS和五个心跳周期用来观察
+%         oneSignalFeature = averageFeature(beats,collection); %得到1x15的矩阵，假如取RR,SP,RS和五个心跳周期用来观察
+        
+        %---------------------------------------------------------------------
+        %在此处添加多窗口到同一特征
+        oneSignalFeature1 = averageFeature(1,collection);
+        oneSignalFeature2 = averageFeature(2,collection);
+        oneSignalFeature3 = averageFeature(3,collection);
+        oneSignalFeature4 = averageFeature(4,collection);
+        oneSignalFeature5 = averageFeature(5,collection);
+        oneSignalFeature6 = averageFeature(6,collection);
+        oneSignalFeature7 = averageFeature(7,collection);
+        oneSignalFeature8 = averageFeature(8,collection);
+        oneSignalFeature9 = averageFeature(9,collection);
+        oneSignalFeature=[oneSignalFeature1,oneSignalFeature2,oneSignalFeature3,oneSignalFeature4,...
+            oneSignalFeature5,oneSignalFeature6,oneSignalFeature7,oneSignalFeature8,oneSignalFeature9];
+        %--------------------------------------------------------------------
+        
         fprintf(' oneSignalFea=% dx %d',size(oneSignalFeature,1),size(oneSignalFeature,2));
         tempFeature{1,1}(end+1,:)=oneSignalFeature; % 需要维度一致
         fprintf(' tempFea=%d x %d\n',size(tempFeature{1,1},1),size(tempFeature{1,1},2));
