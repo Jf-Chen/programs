@@ -1,5 +1,6 @@
-function   [collection,outputCluster_center2]=getFeature(data,extractway)
-%GETFEATURE 此处显示有关此函数的摘要
+function [collection,outputCluster_center2] = getFeature(data,extractway)
+% function   [collection,outputCluster_center2]=getFeature(data,extractway)
+%GETFEATURE 此处显示有关此函数的摘要：获得RR间期作为特征值，取max,min,平均等手段
 %   collection在extractway==1时是3xYY的矩阵，代表三种间隔
 %   RR是RR间隔 1xYY,SP是P波峰和S波谷间隔,RS是R波峰S波谷间隔
 %   leadway参数范围是1-12，代表12种导联方式，这里以MLII为示例
@@ -208,6 +209,8 @@ end
 
 
 
+
+
 %-----------检测P和S----------------------------
 %目前来看R波边界不会把S波包含进去，可以使用自R波峰向前向后搜索波谷（斜率一正一负的点）
 %前提是去噪算法足够好，没有毛刺
@@ -302,22 +305,33 @@ end
 %-----------检测P和S end-----------------
 collection=[];RR=[];SP=[];RS=[];
 switch extractway
-    case 1
-        
-        
+    case 1 
         %与之前的不同，猜测信号的首尾部分一定存在R波而不一定存在P,S波,
         %以两个R波峰之间为一个周期进行统计，
         %PS是一个RR间隔内的距离，RS是S波与靠前的R波峰之间的距离
         for k=1:size(R_peak,2)-1
             RR(end+1)=R_peak(k+1)-R_peak(k);
-            SP(end+1)=P_peak(k+1)-S_trough(k);
-            RS(end+1)=S_trough(k+1)-R_peak(k);
-            collection=[RR;SP;RS];%这一语句不出错的前提是RR,SP,RS的列数一致
+%             SP(end+1)=P_peak(k+1)-S_trough(k);
+%             RS(end+1)=S_trough(k+1)-R_peak(k);
+%             collection=[RR;SP;RS];%这一语句不出错的前提是RR,SP,RS的列数一致
+            collection=RR;
         end
 
 end
 
+
+
+%----------------------------------------------------------------------------
+% 检测出最大的RR间隔，最小的RR间隔，
+
+
+
+
+
+%----------------------------------------
+
 %然后做什么来着,多个一组进行简单的分类器训练
+%经分类结果表现，特征不够多，考虑添加T波峰
 
 
 clear data;
@@ -334,4 +348,5 @@ clear RS extractway;
 
 
 end
+
 

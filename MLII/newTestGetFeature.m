@@ -47,7 +47,7 @@ dataPath='E:\icbeb\TrainingSet';
 % datanum=2933 ;
 % datanum=679;
 % datanum=1670;
-datanum=46;
+datanum=10;
 
 leadway=2;
 correctway=1;
