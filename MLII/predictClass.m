@@ -1,5 +1,5 @@
 function [TypeResult,predictLabel] = predictClass(dataOriginPath,modelPath,leadway,frequency,correctway,extractway,typeA,typeB)
-%PREDICTCLASS 处理单个文件，预测其类型
+%PREDICTCLASS 处理单个文件，预测其类型，使用9beats的model
 %   此处显示详细说明 ,newaccuracy,typeResultSize
 %   dataOriginPath是.mat文件的路径包含E:\icbeb\TrainingSet\A0001.mat，
 %   modelPath是分类器路径包含E:\icbeb\programs\MLII\9beats\，
@@ -46,6 +46,8 @@ correctedData = correctBaseline(correctway,origindata,frequency);
 
 
 %-----------------------predict-------------------------------------
+% 问：如何决策出最后结果？
+% 答：加载所有分类器，投票决定出结果最少的那种，丢弃相关分类器，重复以上过程，直到最后一个不剩，上溯一次，得出分类结果
 % 加载所有分类器，得到36个结果，投票决定最少的那种
 % 重复多次，直到剩下一个或三个分类器
 leftType=[];
