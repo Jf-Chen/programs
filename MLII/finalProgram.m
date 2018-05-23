@@ -51,6 +51,7 @@ testFeaturesName=['testFeatures',num2str(beats),'beats'];
 eval(['[',trainFeaturesName,',trBeReplacedFile] = combineFeature(trainSet,leadway,beats);']);
 eval(['[',testFeaturesName,',teBeReplacedFile] = combineFeature(testSet,leadway,beats);']);
 eval('save(trainFeaturesFileName,trainFeaturesName);');
+eval('save(testFeaturesFileName,testFeaturesName);');
 % save('trainFeatures.mat','trainFeatures');
 % save testFeatures.mat testFeatures
 

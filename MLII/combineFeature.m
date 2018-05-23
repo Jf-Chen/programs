@@ -39,7 +39,8 @@ for k=1:size(trainSet,2)    %------------观察一下其他类型的
             end
         end
         %校验维数是否有0出现
-        if(size(collection,1)==0 || size(collection,2)<beats)
+%         if(size(collection,1)==0 || size(collection,2)<(beats+1))
+        if(size(collection,1)==0 || size(collection,2)<(beats))  %原来的程序就长这样
             beReplacedFile{1,k}(end+1)=typeSet(1,i);
             fprintf('  文件%d被替换了  ',typeSet(1,i));
             clear collection origindata correctedData;
@@ -61,9 +62,10 @@ for k=1:size(trainSet,2)    %------------观察一下其他类型的
         oneSignalFeature6 = averageFeature(6,collection);
         oneSignalFeature7 = averageFeature(7,collection);
         oneSignalFeature8 = averageFeature(8,collection);
-        oneSignalFeature9 = averageFeature(9,collection);
+%         oneSignalFeature9 = averageFeature(9,collection);
         oneSignalFeature=[oneSignalFeature1,oneSignalFeature2,oneSignalFeature3,oneSignalFeature4,...
-            oneSignalFeature5,oneSignalFeature6,oneSignalFeature7,oneSignalFeature8,oneSignalFeature9];
+            oneSignalFeature5,oneSignalFeature6,oneSignalFeature7,oneSignalFeature8];
+%             oneSignalFeature9];
         %--------------------------------------------------------------------
         
         fprintf(' oneSignalFea=% dx %d',size(oneSignalFeature,1),size(oneSignalFeature,2));
