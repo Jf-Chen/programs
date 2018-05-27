@@ -22,7 +22,20 @@ correctedData = correctBaseline(correctway,origindata,frequency);
 
 %---------------------getFeature------------------------------------
 % extractway=1;
-[collection,outputCluster_center2] = getFeature(correctedData,extractway);
+for k=1:10
+    try
+        [collection,outputCluster_center2] = getFeature(correctedData,extractway);
+        break;
+    catch
+        if k<9
+            continue;
+        else
+            %用A0011.mat替代？
+            error('获取collection出错！');
+        end
+        
+    end
+end
 
 % 需要添加try catch
 %---------------------getFeature end------------------------------------
@@ -52,6 +65,7 @@ correctedData = correctBaseline(correctway,origindata,frequency);
 % 重复多次，直到剩下一个或三个分类器
 allType=[];
 possibleType=[];
+predictLabel=0;
 allresult=zeros(8,9);
 for k=1:8
     for j=k+1:9
@@ -105,12 +119,21 @@ for t=1:9 %循环9次
     end
     allresult(:,minType)=0;
     if sum(sum(allresult,1),2)==0
-        finalResult=minType
+        finalResult=minType;
         break;
     end
 end
 %------------------------------------------------------------------------------
 
+%----------------------------------------------------------------------------
+% 输出给txt,路径为 E:\icbeb\programs\MLII\9beats\result.txt
+dlmwrite('E:\icbeb\programs\MLII\9beats\result.txt',finalResult,'delimiter',',','newline','pc'); %文件结束末尾会加上一个回车
+%每次写完会替换掉之前的内容
+%---------------------------------------------------------------------------
+
+
+
+% finalResult=0;
 
 
 % % typeA=1;

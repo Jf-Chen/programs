@@ -1,4 +1,4 @@
-function [TypeResult,newaccuracy,typeResultSize] = predictClassVS(originPath,DS1,sampleOriginPath,samplenum)
+function [TypeResult,newaccuracy,typeResultSize] = predictClassVS_new(originPath,DS1,sampleOriginPath,samplenum)
 %PREDICTCLASSVS 预测结果，输出到txt,由VS读取txt显示结果
 %   此处显示详细说明
 %   选择500Hz,.mat文件的不可以选择训练文件，只能选择测试文件，但是可以选择多个测试文件

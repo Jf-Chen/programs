@@ -158,4 +158,42 @@ special-4beats形成原因有些奇怪，是代码写错了形成的
 
 
 
+预测单个文件的类型的命令
+[TypeResult,predictLabel,allresult,finalResult] = 
+predictClass('E:\icbeb\TrainingSet\A0024.mat','E:\icbeb\programs\MLII\9beats\',2,500,1,1);
+
+仅有第一个参数可以改变，代表文件路径
+结果存放在 E:\graduate_design\MFCApplication2\MFCApplication2\oneVSPath
+vs写完(覆盖,txt文件不存在时会创建)末尾带有回车
+
+最好写一个读取多个文件的
+
+
+
+dat文件的展示分类结果出错了，改为读取txt的方式传递参数
+在Dlg.cpp 476行出错，根据调试结果，能得到path和100.dat
+已查明错误原因，是因为predictClassVS重名
+
+
+
+2018/5/25
+接来下做什么？
+1.写一个反馈整体的准确率的函数，对应dat和mat都要
+2.整理两份函数的说明文档和MFC的路径信息
+
+
+
+问：为什么不按照类型，将有效的图形分类，然后画出去噪后的图像
+    然后断点出QRSPT波以及起始点等
+	然后画出窗口内均值变化曲线，振幅变化曲线，间期变化曲线，若干周期变化曲线
+	最大值最小值差值曲线等等，选出合适的特征来进行分类
+	
+	
+问：医院里的医生是怎么判断不同类型的，依据是什么
+	
+问：借助数据，自行寻找特征
+
+
+
+
 

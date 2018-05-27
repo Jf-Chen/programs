@@ -1,4 +1,4 @@
-function [annotation] = separate(csvPath)
+% function [annotation] = separate(csvPath)
 %SEPARATE 读取csv，将不同类型信号区分开来，3x9的cell
 %         每个cell包含1xYYYY的矩阵，含有多种类型的可以重复计算
 %   csvPath包含完整的路径
@@ -51,5 +51,5 @@ end
 %annotation可以输出了
 
 
-end
+% end
 
